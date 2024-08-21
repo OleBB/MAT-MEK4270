@@ -2,6 +2,7 @@ import numpy as np
 
 
 def mesh_function(f, t):
+    
     pass
 
 def func(t):
