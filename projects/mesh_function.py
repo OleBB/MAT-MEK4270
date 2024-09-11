@@ -2,7 +2,6 @@ import numpy as np
 
 
 def mesh_function(f, t):
-    "hei"
     pass
 
 def func(t):
