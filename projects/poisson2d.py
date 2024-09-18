@@ -63,5 +63,8 @@ class Poisson2D:
         return sparse.linalg.spsolve(A, b.ravel()).reshape((self.px.N+1, self.py.N+1))
 
 def test_poisson2d():
+
     assert False
 
+if __name__ == '__main__':
+    test_poisson2d()

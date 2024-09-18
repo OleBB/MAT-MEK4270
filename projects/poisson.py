@@ -53,7 +53,7 @@ class Poisson:
         b = np.zeros(self.N+1)
         b[1:-1] = sp.lambdify(x, f)(self.x[1:-1])
         b[0] = bc[0]
-        b[-1] = bc[1]
+        b[-1] = bc[1] #kommentar
         return D.tocsr(), b
 
     def create_mesh(self, N):
@@ -113,6 +113,9 @@ class Poisson:
         return np.sqrt(self.dx*np.sum((uj-u)**2))
 
 def test_poisson():
+    #lage en ordenltig test: teste convergence rate
+    #hei igjen
+    #kommentar 3
     assert False
 
 if __name__ == '__main__':
