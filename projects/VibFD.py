@@ -221,3 +221,5 @@ def test_order():
 
 if __name__ == '__main__':
     test_order()
+    a = VibFD4(8, 2*np.pi/0.35, 0.35)
+    b = a()
