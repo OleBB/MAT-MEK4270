@@ -2,10 +2,10 @@ import numpy as np # type: ignore
 
 
 def mesh_function(f, t):
-    hei = np.zeros(len(t))
+    fn = np.zeros(len(t))
     for i, tn in enumerate(t):
-        hei[i] = f(tn)
-    return hei
+        fn[i] = f(tn)
+    return fn
 
 def func(t):
     if t >= 0 and t<= 3:
