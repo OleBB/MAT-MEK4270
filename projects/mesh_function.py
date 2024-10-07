@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np # type: ignore
 
 
 def mesh_function(f, t):

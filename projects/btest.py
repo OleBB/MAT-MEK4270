@@ -14,18 +14,10 @@ class MyMatrixClass:
         D /= self.dx**2
         return D
 
-# Example parameters
-N = 5
-dx = 0.1
 
-# Create an instance of the class
-matrix_instance = MyMatrixClass(N, dx)
-
-# Generate the matrix D
-D = matrix_instance.D2()
-
-# Convert sparse matrix to dense format for better display
-D_dense = D.toarray()
-
-# Display the matrix
-print(D_dense)
+N = 7 # Example parameters
+dx = 0.1 # Example parameters
+matrix_instance = MyMatrixClass(N, dx) # Create an instance of the class
+D = matrix_instance.D2() # Generate the matrix D
+D_dense = D.toarray() # Convert sparse matrix to dense format for better display
+print(D_dense) # Display the matrix
