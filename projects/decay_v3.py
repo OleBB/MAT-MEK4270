@@ -16,7 +16,7 @@ def solver(I, a, T, dt, theta):
 def u_exact(t, I, a):
     return I*exp(-a*t)
 
-from matplotlib.pyplot import *
+from matplotlib.pyplot import * #testnotat
 
 def plot_numerical_and_exact(theta, I, a, T, dt):
     """Compare the numerical and exact solution in a plot."""
@@ -45,6 +45,6 @@ def test_solver_three_steps():
     u, t = solver(I=I, a=a, T=Nt*dt, dt=dt, theta=theta)
 
     tol = 1E-12  # tolerance for comparing floats
-    diff = abs(u - u_by_hand).max()
+    diff = abs(u - u_by_hand).max() 
     success = diff < tol
     assert success
