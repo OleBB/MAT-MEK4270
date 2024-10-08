@@ -8,11 +8,8 @@ x = sp.Symbol('x')
 
 class Poisson:
     """Solve Poisson's equation in 1D::
-
         u''(x) = f(x), x in [0, L], u(0) = a, u(L) = b
-
     where a and b are numbers.
-
     """
     def __init__(self, L=1, N=None):
         self.L = L
@@ -20,7 +17,6 @@ class Poisson:
         self.ue = None
         if isinstance(N, int):
             self.create_mesh(N)
-
     def D2(self):
         """Return second order differentiation matrix
         """
@@ -29,19 +25,14 @@ class Poisson:
         D[-1, -4:] = -1, 4, -5, 2
         D /= self.dx**2
         return D
-
     def assemble(self, bc=(0, 0), f=None):
         """Assemble coefficient matrix and right hand side vector
-
-        Parameters
-        ----------
+        ---------- Parameters
         bc : 2-tuple of numbers
             The boundary conditions at x=0 and x=L
         f : Sympy Function
             The right hand side as a Sympy function
-
-        Returns
-        -------
+        -------Returns
         A : scipy sparse matrix
             Coefficient matrix
         b : 1D array
@@ -58,14 +49,10 @@ class Poisson:
 
     def create_mesh(self, N):
         """Uniform discretization of the line [0, L]
-
-        Parameters
-        ----------
+         ----------Parameters
         N : int
             The number of uniform intervals
-
-        Returns
-        -------
+        Returns -------
         x : array
             The mesh
         """
@@ -76,18 +63,14 @@ class Poisson:
 
     def __call__(self, N, bc=(0, 0), f=implemented_function('f', lambda x: 2)(x)):
         """Solve Poisson's equation
-
-        Parameters
-        ----------
+        Parameters ----------
         N : int
             The number of uniform intervals
         bc : 2-tuple of numbers
             The boundary conditions at x=0 and x=L
         f : Sympy Function
             The right hand side as a Sympy function
-
-        Returns
-        -------
+        Returns -------
         The solution as a Numpy array
 
         """
@@ -97,34 +80,43 @@ class Poisson:
 
     def l2_error(self, u, ue):
         """Return l2-error
-
-        Parameters
-        ----------
+        Parameters ----------
         u : array_like
             Numerical solution
         ue : Sympy function
             The analytical solution
-        Returns
-        -------
+        Returns -------
         The l2-error as a number
-
         """
         uj = sp.lambdify(x, ue)(self.x)
         return np.sqrt(self.dx*np.sum((uj-u)**2))
+    
+    def convergence_rates(self, m=6):
+        E = []
+        h = []
+        N0 = 8
+        for m in range(m):
+            u = self(N0, f=sp.diff(self.ue, x, 2), bc = (self.ue.subs(x,0), self.ue.subs(x,self.L)))
+            E.append(self.l2_error(u, self.ue))
+            h.append(self.dx)
+            N0 *= 2
+        r = [np.log(E[i-1]/E[i])/np.log(h[i-1/h[i]]) for i in range(1, m+1, 1)]
+        return r, np.array(E), np.array(h)
 
 def test_poisson():
-    #lage en ordenltig test: teste convergence rate
-    #hei igjen
-    #kommentar 3
-    assert False
+    sol = Poisson(1)
+    sol.ue = sp.exp(4*sp.cos(x))
+    r, E, h = sol.convergence_rates()
+    assert abs(r[-1]-2) < 1e-2,r
+
 
 if __name__ == '__main__':
-    L = 2
+    L = 4
     sol = Poisson(L=L)
     ue = sp.exp(4*sp.cos(x))
     #ue = x**2
     bc = (ue.subs(x, 0), ue.subs(x, L))
-    u = sol(100, bc=bc, f=sp.diff(ue, x, 2))
+    u = sol(103, bc=bc, f=sp.diff(ue, x, 2))
     print('Manufactured solution: ', ue)
     print(f'Boundary conditions: u(0)={bc[0]:2.4f}, u(L)={bc[1]:2.2f}')
     print(f'Discretization: N = {sol.N}')

@@ -7,6 +7,9 @@ from poisson import Poisson
 
 x, y = sp.symbols('x,y')
 
+# Below we create a solver that reuses some of the implementation from 
+# the 1D solver in poisson.py. 
+
 class Poisson2D:
     r"""Solve Poisson's equation in 2D::
 
@@ -16,6 +19,9 @@ class Poisson2D:
     """
 
     def __init__(self, Lx, Ly, Nx, Ny, ue):
+        # Note that the best solution for a solver may not be to have Nx and 
+        # Ny in the __init__ function, because it should be possible to modify the
+        # number of points without creating a new class.
         self.px = Poisson(Lx, Nx) # we can reuse some of the code from the 1D case
         self.py = Poisson(Ly, Ny)
         self.create_mesh()
@@ -38,7 +44,7 @@ class Poisson2D:
         return (sparse.kron(D2x, Iy) + sparse.kron(Ix, D2y)).tolil()
 
     def assemble(self, f=None):
-        """Return assemble coefficient matrix A and right hand side vector b"""
+        """Return assembled coefficient matrix A and right hand side vector b"""
         A = self.laplace()
         bnds = self.get_boundary_indices()
         for i in bnds:
@@ -51,7 +57,7 @@ class Poisson2D:
         uij = self.meshfunction(self.ue)
         b.ravel()[bnds] = uij.ravel()[bnds]
         return A, b
-    
+
     def meshfunction(self, u):
         """Return Sympy function as mesh function
 
@@ -71,29 +77,18 @@ class Poisson2D:
         B[1:-1, 1:-1] = 0
         return np.where(B.ravel() == 1)[0]
 
-
-    def l2_error(self, u, ue):
+    def l2_error(self, u):
         """Return l2-error
 
         Parameters
         ----------
         u : array
             The numerical solution (mesh function)
-        ue : Sympy function
-            The analytical solution
         """
         return np.sqrt(self.px.dx*self.py.dx*np.sum((u - self.meshfunction(self.ue))**2))
 
-
-    def __call__(self, f=implemented_function('f', lambda x, y: 2)(x, y)):
-        """Solve Poisson's equation with a given righ hand side function
-
-        Parameters
-        ----------
-        N : int
-            The number of uniform intervals
-        f : Sympy function
-            The right hand side function f(x, y)
+    def __call__(self):
+        """Solve Poisson's equation with a given manufactured solution
 
         Returns
         -------
@@ -108,7 +103,7 @@ def convergence_rates(ue, m=6):
     h = []
     N0 = 8
     for m in range(m):
-        sol = Poisson2D(1, 1, N0, N0, ue) #fikk en error her, så jeg lagde poisson2.py, ren kopi av Mortensen.
+        sol = Poisson2D(1, 1, N0, N0, ue)
         u = sol()
         E.append(sol.l2_error(u))
         h.append(sol.px.dx)

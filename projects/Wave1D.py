@@ -199,8 +199,9 @@ def test_pulse_bcs():
 
 
 if __name__ == '__main__':
-    sol = Wave1D(100, cfl=1, L0=2, c0=0.5, u0=sp.exp(-200(x-L/2+c*t)**2))
+    sol = Wave1D(100, L0=2, c0=0.5, cfl=1.0, u0=sp.exp(-200*(x-L/2+c*t)**2))
+        #def  in(self,N,  L0=1, c0=1,  cfl=1,   u0=sp.exp(-200*(x-L/2+c*t)**2)):
     data = sol(110, bc=0, save_step=2, ic=2)
-    sol.animation(data)
+    #sol.animation(data)
     test_pulse_bcs()
     #data = sol(200, bc=2, ic=0, save_step=100)
